@@ -53,9 +53,9 @@ export default function CalendarExport(props: { class?: string }) {
             setErro(error instanceof Error ? error.message : t("erroGerarCalendario"));
         }
     };
-
+    
     return (
-        <div class={" flex justify-center"}>
+        <div class={props.class? props.class.concat(" flex justify-center") : "flex justify-center"}>
             <button
                 type="button"
                 class="botao-berrante flex justify-center cursor-pointer rounded-xl px-6 py-4 text-center text-2lg font-black tracking-wider uppercase"
