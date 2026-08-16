@@ -181,14 +181,44 @@ export function buildIcs(plano: Plano, options: IcsOptions): string {
     return linhas.map(foldLine).join("\r\n") + "\r\n";
 }
 
-export function downloadIcs(content: string, fileName: string): void {
-    const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
+/// Em telas de toque a folha de compartilhamento do sistema e o unico caminho
+/// confiavel: o iOS ignora o atributo `download`, e dentro dos navegadores
+/// embutidos em apps (Google, Gmail) o clique nao faz absolutamente nada. No
+/// desktop o download classico continua sendo melhor, entao so desviamos aqui.
+function shouldUseShareSheet(file: File): boolean {
+    if (typeof navigator === "undefined" || !navigator.canShare) return false;
+    if (!window.matchMedia?.("(pointer: coarse)").matches) return false;
+
+    return navigator.canShare({ files: [file] });
+}
+
+export async function downloadIcs(content: string, fileName: string): Promise<void> {
+    const file = new File([content], fileName, { type: "text/calendar" });
+
+    if (shouldUseShareSheet(file)) {
+        try {
+            await navigator.share({ files: [file], title: fileName });
+            return;
+        } catch (error) {
+            // Usuario fechou a folha de compartilhamento: nao e erro, e desistencia.
+            if (error instanceof DOMException && error.name === "AbortError") return;
+            // Qualquer outra falha cai no download classico abaixo.
+            console.warn("Share sheet unavailable, falling back to download:", error);
+        }
+    }
+
+    const url = URL.createObjectURL(file);
 
     const link = document.createElement("a");
     link.href = url;
     link.download = fileName;
-    link.click();
+    link.rel = "noopener";
 
-    URL.revokeObjectURL(url);
+    // Alguns navegadores so disparam o download de um link presente no documento.
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    // Revogar no mesmo tick cancela o download antes de ele comecar.
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }

@@ -32,7 +32,7 @@ export default function CalendarExport(props: { class?: string }) {
         dialogRef?.showModal();
     };
 
-    const handleExport = (event: SubmitEvent) => {
+    const handleExport = async (event: SubmitEvent) => {
         event.preventDefault();
 
         const plano = currentPlano();
@@ -46,19 +46,19 @@ export default function CalendarExport(props: { class?: string }) {
 
         try {
             const content = buildIcs(plano, { inicio: inicio(), fim: fim(), calendarName });
-            downloadIcs(content, `MatrUFSC_${semestres.join("_") || "plano"}.ics`);
+            await downloadIcs(content, `MatrUFSC_${semestres.join("_") || "plano"}.ics`);
             dialogRef?.close();
         } catch (error) {
             console.error("Error exporting calendar:", error);
             setErro(error instanceof Error ? error.message : t("erroGerarCalendario"));
         }
     };
-    
+
     return (
-        <div class={props.class? props.class.concat(" flex justify-center") : "flex justify-center"}>
+        <div class={props.class ? props.class.concat("flex justify-center") : "flex justify-center"}>
             <button
                 type="button"
-                class="botao-berrante flex justify-center cursor-pointer rounded-xl px-6 py-4 text-center text-2lg font-black tracking-wider uppercase"
+                class="botao-berrante text-2lg flex cursor-pointer justify-center rounded-xl px-6 py-4 text-center font-black tracking-wider uppercase"
                 onClick={openDialog}
             >
                 {t("exportarCalendarioBotao")}
