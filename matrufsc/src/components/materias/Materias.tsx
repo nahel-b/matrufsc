@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { For, Show } from "solid-js";
 import { usePlano, type Materia, type Turma } from "~/context/plano/Plano.store";
+import { t } from "~/lib/i18n";
 import { useHorariosOverlay } from "../horarios/useHorariosOverlay";
 
 export default function Materias(props: { class?: string }) {
@@ -89,11 +90,13 @@ function MateriasTableHead(props: { creditos: number }) {
         <thead class="relative bg-neutral-100">
             <tr class="divide-x divide-neutral-400">
                 <th class="h-7 w-10 px-3 py-1.5 text-left font-normal text-neutral-700 select-none"></th>
-                <th class="col-span-2 h-7 w-24 px-3 py-1.5 text-left font-normal text-neutral-700">Código</th>
+                <th class="col-span-2 h-7 w-24 px-3 py-1.5 text-left font-normal text-neutral-700">{t("codigo")}</th>
                 <th class="h-7 px-3 py-1.5 text-left font-normal text-neutral-700">
                     <div class="flex items-center justify-between">
-                        <span>Matéria</span>
-                        <span class="text-sm font-normal text-neutral-400 normal-case">Créditos: {props.creditos}</span>
+                        <span>{t("materia")}</span>
+                        <span class="text-sm font-normal text-neutral-400 normal-case">
+                            {t("creditos", { total: props.creditos })}
+                        </span>
                     </div>
                 </th>
             </tr>
@@ -137,7 +140,7 @@ function MateriaRow(props: {
                         type="checkbox"
                         checked={props.materia.selected}
                         disabled={props.materia.blocked}
-                        title={props.materia.blocked ? "Conflito com matéria(s) acima na lista" : ""}
+                        title={props.materia.blocked ? t("conflitoComMateriasAcima") : ""}
                         onChange={() => props.onToggleSelection(props.materia.id, props.materia.selected)}
                         onClick={(event) => event.stopPropagation()}
                         class="hit-area-2.75 mr-0 cursor-pointer"
@@ -150,7 +153,7 @@ function MateriaRow(props: {
                 <div class="absolute top-1/2 right-0 flex -translate-y-1/2 items-stretch opacity-0 select-none group-hover:opacity-100">
                     <button
                         type="button"
-                        aria-label="Mover matéria para cima"
+                        aria-label={t("moverMateriaParaCima")}
                         disabled={props.isFirst}
                         class={clsx(
                             "disabled:cursor-default disabled:no-underline disabled:opacity-30",
@@ -165,7 +168,7 @@ function MateriaRow(props: {
                     </button>
                     <button
                         type="button"
-                        aria-label="Mover matéria para baixo"
+                        aria-label={t("moverMateriaParaBaixo")}
                         disabled={props.isLast}
                         class={clsx(
                             "disabled:cursor-default disabled:no-underline disabled:opacity-30",
@@ -180,7 +183,7 @@ function MateriaRow(props: {
                     </button>
                     <button
                         type="button"
-                        aria-label="Remover matéria"
+                        aria-label={t("removerMateria")}
                         class="flex cursor-pointer items-center py-1.5 pr-3 pl-1.5 underline-offset-1 hover:underline"
                         onClick={(e) => {
                             e.stopPropagation();

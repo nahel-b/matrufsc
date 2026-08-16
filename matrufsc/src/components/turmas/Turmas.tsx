@@ -3,6 +3,7 @@ import { createMemo, For, Show, type Accessor } from "solid-js";
 import { mergeEquivalentTurmas } from "~/context/plano/combinacoes";
 import { usePlano, type Materia, type Turma } from "~/context/plano/Plano.store";
 import { useHorariosOverlay } from "../horarios/useHorariosOverlay";
+import { t } from "~/lib/i18n";
 
 export default function Turmas(props: { class?: string }) {
     const { materias, focusedMateriaId, setFocusedMateriaId, updateTurmasSelected } = usePlano();
@@ -55,13 +56,14 @@ function TurmasTableHead(props: { onClose?: () => void }) {
                         class="pointer-events-none mr-0 translate-y-[3px] cursor-pointer opacity-0"
                     /> */}
                 </th>
-                <th class="w-24 px-3 py-[5px] text-left font-normal text-neutral-700">Turma</th>
-                <th class="w-[1%] px-3 py-[5px] text-left font-normal text-neutral-700">Vagas</th>
+                <th class="w-24 px-3 py-[5px] text-left font-normal text-neutral-700">{t("turma")}</th>
+                <th class="w-[1%] px-3 py-[5px] text-left font-normal text-neutral-700">{t("vagas")}</th>
                 <th class="flex w-full items-center justify-between px-3 py-[5px] font-normal">
-                    <span class="text-neutral-700">Professores</span>
+                    <span class="text-neutral-700">{t("professores")}</span>
                     <button
                         class="hit-area-y-1.5 hit-area-x-3 cursor-pointer pr-1 text-lg text-neutral-700 hover:text-black hover:underline"
                         onClick={props.onClose}
+                        title={t("fecharTurmas")}
                     >
                         —
                     </button>
@@ -86,7 +88,7 @@ function TurmasTableRows(props: {
     });
 
     return (
-        <For each={groupedTurmas()} fallback={<TurmasEmptyRow message="Nenhuma turma disponível para esta matéria." />}>
+        <For each={groupedTurmas()} fallback={<TurmasEmptyRow message={t("nenhumaTurmaDisponivel")} />}>
             {(turmas) => (
                 <TurmaRow
                     id={`turma-${turmas[0].id}`} // Use the first turma's id as the group id
@@ -189,11 +191,11 @@ function TurmaRow(props: {
                                             : "text-green-700",
                                     )}
                                 >
-                                    (<span title="Vagas ocupadas">{twochars(turma.vagas_ocupadas)}</span>
-                                    <span title="Pedidos sem vaga">
+                                    (<span title={t("vagasOcupadas")}>{twochars(turma.vagas_ocupadas)}</span>
+                                    <span title={t("pedidosSemVaga")}>
                                         {pedidosSemVaga > 0 ? `+${twochars(pedidosSemVaga)}` : "\u00A0\u00A0\u00A0"}
                                     </span>
-                                    /<span title="Vagas ofertadas">{twochars(turma.vagas_ofertadas)}</span>)
+                                    /<span title={t("vagasOfertadas")}>{twochars(turma.vagas_ofertadas)}</span>)
                                 </span>
                             </div>
                         );

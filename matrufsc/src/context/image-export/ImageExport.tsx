@@ -3,6 +3,7 @@ import { useHorariosOverlay } from "~/components/horarios/useHorariosOverlay";
 import { captureElementToPng, composeSquareImage, downloadDataUrl, loadImage, waitForFrames } from "./html-to-image";
 import Materias from "~/components/materias/Materias";
 import Horarios from "~/components/horarios/Horarios";
+import { t } from "~/lib/i18n";
 
 const EXPORT_SCALE_FACTOR = 2;
 const EXPORT_IMAGE_SIZE = 1080 * EXPORT_SCALE_FACTOR;
@@ -52,7 +53,7 @@ export function ImageExportProvider(props: ParentProps) {
             downloadDataUrl(exportedDataUrl, fileName);
         } catch (error) {
             console.error("Error exporting image:", error);
-            alert("Não foi possível exportar a imagem da combinação atual.");
+            alert(t("erroExportarImagem"));
         } finally {
             setShouldRenderCaptureScene(false);
             setCaptureElement(undefined);

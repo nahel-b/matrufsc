@@ -2,14 +2,16 @@ import { createMemo, createSignal, Show } from "solid-js";
 import { usePlano } from "~/context/plano/Plano.store";
 import { buildIcs, downloadIcs } from "~/lib/ics";
 import { getRangeForSemesters, isKnownSemester } from "~/lib/semesterDates";
+import { t } from "~/lib/i18n";
 
 function formatSemester(semester: string) {
     if (semester.length !== 5) return semester;
     return `${semester.slice(0, 4)}.${semester.slice(4)}`;
 }
 
-/// Botao que abre o dialogo de exportacao para calendario (.ics).
-export default function CalendarExport(props: { onExported?: () => void }) {
+/// Botao (bem berrante, a pedido) que abre o dialogo de exportacao para
+/// calendario. Fica direto na pagina, nao escondido atras do menu "Salvar".
+export default function CalendarExport(props: { class?: string }) {
     const { currentPlano } = usePlano();
 
     let dialogRef: HTMLDialogElement | undefined;
@@ -35,7 +37,7 @@ export default function CalendarExport(props: { onExported?: () => void }) {
 
         const plano = currentPlano();
         if (!plano || plano.length === 0) {
-            setErro("Nenhuma combinação para exportar.");
+            setErro(t("nenhumaCombinacao"));
             return;
         }
 
@@ -46,17 +48,20 @@ export default function CalendarExport(props: { onExported?: () => void }) {
             const content = buildIcs(plano, { inicio: inicio(), fim: fim(), calendarName });
             downloadIcs(content, `MatrUFSC_${semestres.join("_") || "plano"}.ics`);
             dialogRef?.close();
-            props.onExported?.();
         } catch (error) {
             console.error("Error exporting calendar:", error);
-            setErro(error instanceof Error ? error.message : "Não foi possível gerar o calendário.");
+            setErro(error instanceof Error ? error.message : t("erroGerarCalendario"));
         }
     };
 
     return (
-        <>
-            <button class="link cursor-pointer" onClick={openDialog}>
-                Exportar calendário
+        <div class={props.class}>
+            <button
+                type="button"
+                class="botao-berrante cursor-pointer rounded-xl px-6 py-4 text-center text-2lg font-black tracking-wider uppercase"
+                onClick={openDialog}
+            >
+                {t("exportarCalendarioBotao")}
             </button>
 
             <dialog
@@ -68,16 +73,13 @@ export default function CalendarExport(props: { onExported?: () => void }) {
             >
                 <form class="flex flex-col gap-4" onSubmit={handleExport}>
                     <div>
-                        <h5>Exportar calendário</h5>
-                        <p class="mt-1 text-sm text-neutral-600">
-                            Gera um arquivo .ics com as aulas da combinação atual, repetidas semanalmente. Importe no
-                            Google Agenda, no Calendário do iPhone ou em qualquer app compatível.
-                        </p>
+                        <h5>{t("exportarCalendario")}</h5>
+                        <p class="mt-1 text-sm text-neutral-600">{t("exportarCalendarioDescricao")}</p>
                     </div>
 
                     <div class="flex gap-4">
                         <label class="flex flex-1 flex-col gap-1 text-sm">
-                            Início do semestre
+                            {t("inicioDoSemestre")}
                             <input
                                 type="date"
                                 required
@@ -87,7 +89,7 @@ export default function CalendarExport(props: { onExported?: () => void }) {
                             />
                         </label>
                         <label class="flex flex-1 flex-col gap-1 text-sm">
-                            Fim do semestre
+                            {t("fimDoSemestre")}
                             <input
                                 type="date"
                                 required
@@ -100,27 +102,24 @@ export default function CalendarExport(props: { onExported?: () => void }) {
                     </div>
 
                     <p class="text-sm text-neutral-600">
-                        <Show
-                            when={estimated()}
-                            fallback="Datas do calendário acadêmico da UFSC — ajuste se necessário."
-                        >
-                            Datas estimadas: confira o calendário acadêmico da UFSC antes de exportar.
+                        <Show when={estimated()} fallback={t("datasOficiais")}>
+                            {t("datasEstimadas")}
                         </Show>{" "}
-                        Feriados e recessos não são removidos.
+                        {t("feriadosNaoRemovidos")}
                     </p>
 
                     <Show when={erro()}>{(mensagem) => <p class="text-sm text-red-600">{mensagem()}</p>}</Show>
 
                     <div class="flex justify-end gap-6">
                         <button type="button" class="link cursor-pointer" onClick={() => dialogRef?.close()}>
-                            Cancelar
+                            {t("cancelar")}
                         </button>
                         <button type="submit" class="link cursor-pointer">
-                            Baixar .ics
+                            {t("baixarIcs")}
                         </button>
                     </div>
                 </form>
             </dialog>
-        </>
+        </div>
     );
 }

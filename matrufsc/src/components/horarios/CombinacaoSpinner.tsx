@@ -1,5 +1,6 @@
 import { createEffect, createSignal } from "solid-js";
 import { usePlano } from "~/context/plano/Plano.store";
+import { t } from "~/lib/i18n";
 
 export default function CombinacaoSpinner() {
     const { planos, currentPlanoIndex, setPlanoIndex } = usePlano();
@@ -71,7 +72,7 @@ export default function CombinacaoSpinner() {
             >
                 {">"}
             </button>
-            <span>combinações</span>
+            <span>{t("combinacoes")}</span>
         </div>
     );
 }

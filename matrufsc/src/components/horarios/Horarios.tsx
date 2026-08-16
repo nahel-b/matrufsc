@@ -2,16 +2,12 @@ import { createMemo, createSignal, For, Match, Show, Switch, type JSX } from "so
 import { clsx } from "clsx";
 // Context
 import { usePlano, type Plano } from "~/context/plano/Plano.store";
+import { t, type TranslationKey } from "~/lib/i18n";
 import { useHorariosOverlay } from "./useHorariosOverlay";
 
-const DIAS = [
-    { number: 2, name: "Segunda" },
-    { number: 3, name: "Terça" },
-    { number: 4, name: "Quarta" },
-    { number: 5, name: "Quinta" },
-    { number: 6, name: "Sexta" },
-    { number: 7, name: "Sábado" },
-];
+const DIAS = [2, 3, 4, 5, 6, 7] as const;
+
+const nomeDoDia = (dia: number) => t(`dia${dia}` as TranslationKey);
 
 export const HORAS = [
     "07:30",
@@ -66,7 +62,7 @@ function HorariosTableHead(props: { showDetails: boolean; onChangeShowDetails: (
             <tr>
                 <th class="py-[5px] pr-1 whitespace-nowrap">
                     <input
-                        title="Mostrar salas..."
+                        title={t("mostrarSalas")}
                         type="checkbox"
                         checked={props.showDetails}
                         onChange={(e) => props.onChangeShowDetails(e.currentTarget.checked)}
@@ -81,7 +77,7 @@ function HorariosTableHead(props: { showDetails: boolean; onChangeShowDetails: (
                                 "rounded-sm border border-neutral-400 bg-neutral-100 px-1 py-1.5 font-normal text-neutral-700 shadow-xs",
                             )}
                         >
-                            {dia.name}
+                            {nomeDoDia(dia)}
                         </th>
                     )}
                 </For>
@@ -152,12 +148,12 @@ function HorariosTableBody(props: { showDetails: boolean }) {
                                 {(dia) => (
                                     <HorarioCell
                                         base={() => {
-                                            const base = horarios()[dia.number]?.[hora] ?? undefined;
+                                            const base = horarios()[dia]?.[hora] ?? undefined;
                                             const overlayId = overlayMateriaId();
                                             if (base && overlayId && base.id === overlayId) return undefined; // hide base if an overlay for that materia is active
                                             return base;
                                         }}
-                                        overlay={() => overlay()[dia.number]?.[hora] ?? undefined}
+                                        overlay={() => overlay()[dia]?.[hora] ?? undefined}
                                         showDetails={props.showDetails}
                                     />
                                 )}

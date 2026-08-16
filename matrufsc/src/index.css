@@ -67,6 +67,39 @@ a:disabled,
     }
 }
 
+/* Botao de exportar para o calendario: intencionalmente berrante. */
+@keyframes botao-berrante-arcoiris {
+    to {
+        background-position: 200% 50%;
+    }
+}
+
+.botao-berrante {
+    background-image: linear-gradient(90deg, #ff0000, #ff8c00, #ffee00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+    background-size: 200% 100%;
+    color: #ffffff;
+    align-self: center;
+    /* text-shadow:
+        2px 2px 0 #000000,
+        -2px -2px 0 #000000,
+        2px -2px 0 #000000,
+        -2px 2px 0 #000000; */
+    box-shadow:
+        /* 0 0 0 4px #ffff00, */
+        0 0 24px 8px rgba(255, 0, 255, 0.6);
+    animation: botao-berrante-arcoiris 2s linear infinite;
+}
+
+.botao-berrante:hover {
+    filter: saturate(2) contrast(1.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .botao-berrante {
+        animation: none;
+    }
+}
+
 .materia-item.hovering,
 .horario-item.hovering {
     /* TODO: Remove important */

@@ -3,7 +3,7 @@ import { createSignal, For, onCleanup, Show } from "solid-js";
 import { writeClipboard } from "@solid-primitives/clipboard";
 import { useClickOutside } from "~/components/search/useClickOutside";
 import { useImageExport } from "~/context/image-export/ImageExport";
-import CalendarExport from "~/components/export/CalendarExport";
+import { locale, LOCALES, setLocale, t, type Locale } from "~/lib/i18n";
 
 export default function Header(props: {
     class?: string;
@@ -63,6 +63,16 @@ export default function Header(props: {
                                 </For>
                             </select>
                         </Show>
+                        <select
+                            name="idioma"
+                            id="idioma"
+                            title={t("idioma")}
+                            class="bg-transparent focus:border-transparent focus:outline-none"
+                            value={locale()}
+                            onChange={(e) => setLocale(e.currentTarget.value as Locale)}
+                        >
+                            <For each={LOCALES}>{(option) => <option value={option.value}>{option.label}</option>}</For>
+                        </select>
                     </div>
                 </div>
                 <Show when={props.showExportOptions}>
@@ -146,20 +156,19 @@ function ExportOptions() {
                 when={showingExportOptions()}
                 fallback={
                     <button class="link cursor-pointer" onClick={() => setShowingExportOptions(true)}>
-                        Salvar
+                        {t("salvar")}
                     </button>
                 }
             >
                 <button class="link cursor-pointer" onClick={handleExportImage} disabled={isExportingImage()}>
-                    {isExportingImage() ? "Exportando..." : "Exportar imagem"}
+                    {isExportingImage() ? t("exportando") : t("exportarImagem")}
                 </button>
-                <CalendarExport onExported={() => setShowingExportOptions(false)} />
                 <button class="link cursor-pointer" onClick={handleShareLink} disabled={shareStatus() === "copied"}>
                     {shareStatus() === "copied"
-                        ? "Link copiado"
+                        ? t("linkCopiado")
                         : shareStatus() === "error"
-                          ? "Erro ao copiar"
-                          : "Compartilhar link"}
+                          ? t("erroAoCopiar")
+                          : t("compartilharLink")}
                 </button>
             </Show>
         </div>

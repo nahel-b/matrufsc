@@ -1,4 +1,4 @@
-import { createEffect, createResource, createSignal } from "solid-js";
+import { createEffect, createResource, createSignal, Show } from "solid-js";
 import { makePersisted } from "@solid-primitives/storage";
 import { createPersistedSignal } from "~/lib/createPersistedSignal";
 import { createCachedResource } from "~/lib/createCachedResource";
@@ -17,6 +17,8 @@ import Materias from "~/components/materias/Materias";
 import Turmas from "~/components/turmas/Turmas";
 import Horarios from "~/components/horarios/Horarios";
 import CombinacaoSpinner from "./components/horarios/CombinacaoSpinner";
+import CalendarExport from "~/components/export/CalendarExport";
+import { htmlLangFor, locale, t } from "~/lib/i18n";
 
 const CAMPUS: { title: string; value: JSONCampusCode }[] = [
     { title: "Florianópolis", value: "FLO" },
@@ -47,6 +49,10 @@ export default function App() {
     const disciplinas = () => campusData()?.disciplinas ?? [];
 
     createEffect(() => {
+        document.documentElement.lang = htmlLangFor(locale());
+    });
+
+    createEffect(() => {
         const options = semesterOptions();
         if (!options) return;
         const current = semester();
@@ -60,7 +66,7 @@ export default function App() {
             addMateria(parsedMateria);
         } catch (error) {
             if (error instanceof MateriaExistsError) {
-                alert(error.message); // TODO: Lidar visualmente
+                alert(t("materiaJaAdicionada", { id: parsedMateria.id })); // TODO: Lidar visualmente
                 return;
             }
             throw error;
@@ -87,12 +93,12 @@ export default function App() {
                     <Search
                         placeholder={
                             urlStateLoading()
-                                ? "Carregando disciplinas..."
+                                ? t("carregandoDisciplinas")
                                 : semesterOptions.loading || campusData.loading
                                   ? campusData()
-                                      ? "Pesquisar disciplina (atualizando...)"
-                                      : "Carregando disciplinas..."
-                                  : "Pesquisar disciplina"
+                                      ? t("pesquisarDisciplinaAtualizando")
+                                      : t("carregandoDisciplinas")
+                                  : t("pesquisarDisciplina")
                         }
                         disabled={
                             urlStateLoading() || ((semesterOptions.loading || campusData.loading) && !campusData())
@@ -107,6 +113,7 @@ export default function App() {
                         getLabel={(disciplina) => `${disciplina[0]} - ${disciplina[2]}`}
                     />
                     <Materias class="mt-6" />
+                    
                 </div>
                 <div class="my-4 flex flex-col items-center gap-3 lg:my-8">
                     <div class="w-full overflow-x-auto px-6">
@@ -117,6 +124,9 @@ export default function App() {
                     </div>
                     <CombinacaoSpinner />
                 </div>
+                <Show when={materias.length > 0}>
+                        <CalendarExport class="mt-6" />
+                    </Show>
             </main>
             <div class="mx-auto w-full max-w-[1000px] shrink-0 px-6">
                 <Footer class="mt-2" />

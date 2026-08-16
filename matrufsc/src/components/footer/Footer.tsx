@@ -1,13 +1,14 @@
 import clsx from "clsx";
+import { t } from "~/lib/i18n";
 
 export default function Footer(props: { class?: string }) {
     return (
         <footer class={clsx("flex items-center justify-between", props.class)}>
             <p>
-                <span>Este aplicativo não possui vínculo oficial com a UFSC.</span>
+                <span>{t("semVinculoUfsc")}</span>
                 <br />
                 <span>
-                    Não se esqueça de fazer sua matrícula no{" "}
+                    {t("naoEsquecaMatricula")}{" "}
                     <a class="text-nowrap" target="_blank" href="http://cagr.ufsc.br/" rel="noreferrer">
                         CAGR
                     </a>
@@ -21,10 +22,10 @@ export default function Footer(props: { class?: string }) {
                     target="_blank"
                     rel="noreferrer"
                 >
-                    Avaliar
+                    {t("avaliar")}
                 </a>
-                <a href="https://github.com/andrerocco/matrufsc" target="_blank" rel="noreferrer">
-                    Sobre
+                <a href="https://github.com/nahel-b/matrufsc" target="_blank" rel="noreferrer">
+                    {t("sobre")}
                 </a>
             </div>
         </footer>
