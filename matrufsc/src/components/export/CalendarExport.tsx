@@ -55,10 +55,10 @@ export default function CalendarExport(props: { class?: string }) {
     };
 
     return (
-        <div class={props.class}>
+        <div class={" flex justify-center"}>
             <button
                 type="button"
-                class="botao-berrante cursor-pointer rounded-xl px-6 py-4 text-center text-2lg font-black tracking-wider uppercase"
+                class="botao-berrante flex justify-center cursor-pointer rounded-xl px-6 py-4 text-center text-2lg font-black tracking-wider uppercase"
                 onClick={openDialog}
             >
                 {t("exportarCalendarioBotao")}
