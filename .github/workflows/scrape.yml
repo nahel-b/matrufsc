@@ -83,11 +83,9 @@ jobs:
           enable_jekyll: true # data branch is not a site; skip the .nojekyll file
 
       # A push by GITHUB_TOKEN does not trigger other workflows, so we fan out to
-      # the deploys explicitly (workflow_dispatch is exempt from that rule).
-      - name: Trigger deploys
+      # the deploy explicitly (workflow_dispatch is exempt from that rule).
+      - name: Trigger deploy
         if: steps.diff.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          gh workflow run deploy.yml
-          gh workflow run deploy-matrufsc-github-io.yml
+        run: gh workflow run deploy.yml

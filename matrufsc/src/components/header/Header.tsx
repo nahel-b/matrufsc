@@ -3,6 +3,7 @@ import { createSignal, For, onCleanup, Show } from "solid-js";
 import { writeClipboard } from "@solid-primitives/clipboard";
 import { useClickOutside } from "~/components/search/useClickOutside";
 import { useImageExport } from "~/context/image-export/ImageExport";
+import CalendarExport from "~/components/export/CalendarExport";
 
 export default function Header(props: {
     class?: string;
@@ -152,6 +153,7 @@ function ExportOptions() {
                 <button class="link cursor-pointer" onClick={handleExportImage} disabled={isExportingImage()}>
                     {isExportingImage() ? "Exportando..." : "Exportar imagem"}
                 </button>
+                <CalendarExport onExported={() => setShowingExportOptions(false)} />
                 <button class="link cursor-pointer" onClick={handleShareLink} disabled={shareStatus() === "copied"}>
                     {shareStatus() === "copied"
                         ? "Link copiado"
