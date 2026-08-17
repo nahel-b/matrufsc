@@ -181,13 +181,34 @@ export function buildIcs(plano: Plano, options: IcsOptions): string {
     return linhas.map(foldLine).join("\r\n") + "\r\n";
 }
 
-/// Em telas de toque a folha de compartilhamento do sistema e o unico caminho
-/// confiavel: o iOS ignora o atributo `download`, e dentro dos navegadores
-/// embutidos em apps (Google, Gmail) o clique nao faz absolutamente nada. No
-/// desktop o download classico continua sendo melhor, entao so desviamos aqui.
+/// O Safari do iOS baixa o arquivo normalmente e ja oferece abrir no Calendario,
+/// entao ali o download classico continua melhor que a folha de compartilhamento.
+/// Os navegadores embutidos em apps (Google, Chrome, Gmail) rodam sobre o mesmo
+/// motor mas engolem o download, e so se distinguem pelo user agent — nao ha
+/// deteccao de recurso para "o atributo download funciona". Se algum token novo
+/// aparecer, o pior caso e cair na folha de compartilhamento, que funciona nos
+/// dois.
+function isIosSafari(): boolean {
+    const ua = navigator.userAgent;
+
+    const isIos = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    if (!isIos) return false;
+
+    // Todo navegador no iOS se anuncia como Safari; quem nao e Safari adiciona
+    // o proprio token (CriOS = Chrome, GSA = app do Google, FBAN = Facebook...).
+    const outroNavegador = /CriOS|FxiOS|EdgiOS|OPiOS|GSA|FBAN|FBAV|Instagram|Line|MicroMessenger|DuckDuckGo/.test(ua);
+
+    return !outroNavegador && /Safari\//.test(ua) && /Version\//.test(ua);
+}
+
+/// Em telas de toque a folha de compartilhamento do sistema e o caminho mais
+/// confiavel: dentro dos navegadores embutidos em apps o clique no link de
+/// download nao faz absolutamente nada. No desktop e no Safari do iOS o download
+/// classico e melhor, entao so desviamos fora deles.
 function shouldUseShareSheet(file: File): boolean {
     if (typeof navigator === "undefined" || !navigator.canShare) return false;
     if (!window.matchMedia?.("(pointer: coarse)").matches) return false;
+    if (isIosSafari()) return false;
 
     return navigator.canShare({ files: [file] });
 }

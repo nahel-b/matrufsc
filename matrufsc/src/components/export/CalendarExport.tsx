@@ -55,7 +55,7 @@ export default function CalendarExport(props: { class?: string }) {
     };
 
     return (
-        <div class={props.class ? props.class.concat("flex justify-center") : "flex justify-center"}>
+        <div class={props.class ? props.class.concat(" flex justify-center") : "flex justify-center"}>
             <button
                 type="button"
                 class="botao-berrante text-2lg flex cursor-pointer justify-center rounded-xl px-6 py-4 text-center font-black tracking-wider uppercase"
